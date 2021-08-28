@@ -1,11 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Twitter from 'twitter-lite'
 
+// For some weird reason we need `toString` env variables strings
 const client = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY!,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET!,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY!,
-  access_token_secret: process.env.TWITTER_ACCOUNT_TOKEN_SECRET!,
+  consumer_key: process.env.TWITTER_CONSUMER_KEY!.toString(),
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET!.toString(),
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY!.toString(),
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET!.toString(),
 })
 
 export default async function handler(
