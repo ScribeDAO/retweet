@@ -71,7 +71,11 @@ const SummaryForm = () => {
                 )}
               </Field>
               {/* @ts-ignore TODO: improve typings */}
-              <Reward ref={yay} type="confetti" config={{ spread: 60 }}>
+              <Reward
+                ref={yay}
+                type="confetti"
+                config={{ spread: 135, elementCount: 900 }}
+              >
                 <Button
                   colorScheme="teal"
                   isLoading={props.isSubmitting}
