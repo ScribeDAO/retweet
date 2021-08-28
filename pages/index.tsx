@@ -18,7 +18,7 @@ import { Field, Formik, Form } from 'formik'
 import Reward from 'react-rewards'
 
 const SummaryForm = () => {
-  const yay = useRef(null)
+  const yay = useRef()
   const toast = createStandaloneToast()
 
   const validateTwitterUrl = (value: string) => {
@@ -48,8 +48,10 @@ const SummaryForm = () => {
             duration: 2000,
             isClosable: true,
           })
+          // @ts-ignore -  we know this exists find a better way to type this
           yay.current.punishMe()
         } else {
+          // @ts-ignore - we know this exists find a better way to type this
           yay.current.rewardMe()
         }
       }}
@@ -60,6 +62,7 @@ const SummaryForm = () => {
             <FormLabel htmlFor="url">Summary Link</FormLabel>
             <Flex>
               <Field name="url" validate={validateTwitterUrl}>
+                {/* @ts-ignore TODO: improve typings */}
                 {({ field, form }) => (
                   <FormControl isInvalid={form.errors.url && form.touched.url}>
                     <Input {...field} id="url" placeholder="Tweet URL" />
@@ -67,6 +70,7 @@ const SummaryForm = () => {
                   </FormControl>
                 )}
               </Field>
+              {/* @ts-ignore TODO: improve typings */}
               <Reward ref={yay} type="confetti" config={{ spread: 60 }}>
                 <Button
                   colorScheme="teal"
