@@ -70,8 +70,8 @@ const SummaryForm = () => {
                   </FormControl>
                 )}
               </Field>
-              {/* @ts-ignore TODO: improve typings */}
               <Reward
+                // @ts-ignore TODO: improve typings
                 ref={yay}
                 type="confetti"
                 config={{ spread: 135, elementCount: 900 }}
