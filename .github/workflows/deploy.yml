@@ -1,0 +1,23 @@
+name: Deploy to production 🚀
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-token: ${{ secrets.GEL_VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.GEL_ORG_ID}}
+          vercel-project-id: ${{ secrets.GEL_SCRIBE_PROJECT_ID}}
+          vercel-args: '--prod'
+          github-comment: false # No need to comment preview link
+          working-directory: ./
