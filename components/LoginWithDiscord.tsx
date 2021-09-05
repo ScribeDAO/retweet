@@ -29,7 +29,7 @@ const DiscordButton = () => {
   return (
     <form method="post" action="/api/auth/signin/discord">
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-      <Button leftIcon={<DiscordLogo />} type="submit">
+      <Button leftIcon={<DiscordLogo />} type="submit" variant="outline">
         Login with Discord
       </Button>
     </form>
