@@ -1,8 +1,6 @@
-import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import {
   Button,
   Flex,
-  useColorMode,
   Image,
   Popover,
   PopoverTrigger,
@@ -14,6 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useSession, signOut } from 'next-auth/client'
 import DiscordButton from './LoginWithDiscord'
+import ThemeButton from './ThemeButton'
 
 const AuthButton = () => {
   const [session, loading] = useSession()
@@ -54,15 +53,11 @@ const AuthButton = () => {
 }
 
 const Navbar = () => {
-  const { colorMode, toggleColorMode } = useColorMode()
-
   return (
     <Flex marginX="1rem" marginTop="1rem" justifyContent="space-between">
       <AuthButton />
       <Flex justify="flex-end">
-        <Button onClick={toggleColorMode}>
-          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-        </Button>
+        <ThemeButton />
       </Flex>
     </Flex>
   )
