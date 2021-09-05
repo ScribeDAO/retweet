@@ -10,3 +10,5 @@ export enum ServerRoleIds {
   SCRIBE = '883882756495519785',
   KNOWLEDGE_SEEKER = '883896125327826945',
 }
+
+export const DISCORD_SERVER_INVITE = 'https://discord.com/invite/ySFKTEyGn8'
