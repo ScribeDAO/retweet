@@ -1,10 +1,8 @@
-import { MoonIcon, SunIcon, ExternalLinkIcon } from '@chakra-ui/icons'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { useRef } from 'react'
 import {
   Button,
   Flex,
-  Heading,
-  useColorMode,
   FormControl,
   FormLabel,
   FormErrorMessage,
@@ -12,10 +10,10 @@ import {
   Input,
   Link,
   createStandaloneToast,
-  chakra,
 } from '@chakra-ui/react'
 import { Field, Formik, Form } from 'formik'
 import Reward from 'react-rewards'
+import Navbar from '../components/Navbar'
 
 const SummaryForm = () => {
   const yay = useRef()
@@ -101,15 +99,9 @@ const SummaryForm = () => {
 }
 
 const Home = () => {
-  const { colorMode, toggleColorMode } = useColorMode()
-
   return (
     <Flex height="100vh" direction="column">
-      <Flex justify="flex-end" marginX="1rem" marginTop="1rem">
-        <Button onClick={toggleColorMode}>
-          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-        </Button>
-      </Flex>
+      <Navbar />
       <Flex
         marginTop="-1rem"
         margin="auto"
