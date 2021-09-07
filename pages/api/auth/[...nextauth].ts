@@ -6,8 +6,11 @@ import {
   ServerRoleIds,
 } from '../../../lib/consts'
 import type { CurrentUserGuilds, GuildMember } from '../../../lib/discordTypes'
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import prisma from '../../../lib/db'
 
 export default NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
     Providers.Discord({
       clientId: process.env.DISCORD_CLIENT_ID,

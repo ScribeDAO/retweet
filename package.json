@@ -6,13 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start:db": "cd db && docker-compose up -d",
+    "stop:db": "cd db && docker-compose stop"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/react": "^1.6.6",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@next-auth/prisma-adapter": "^0.5.4",
+    "@prisma/client": "^3.0.1",
     "formik": "^2.2.9",
     "framer-motion": "^4",
     "next": "11.1.0",
@@ -28,6 +32,8 @@
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.0",
     "prettier": "^2.3.2",
+    "prisma": "3.0.1",
+    "prisma-dbml-generator": "^0.7.0",
     "typescript": "4.3.2"
   }
 }
