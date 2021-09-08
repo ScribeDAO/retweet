@@ -1,13 +1,19 @@
+import { GetStaticProps } from 'next'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Flex, Heading, Link } from '@chakra-ui/react'
 import { useSession } from 'next-auth/client'
 import DiscordButton from '../components/LoginWithDiscord'
 import Navbar from '../components/Navbar'
-import SummaryForm from '../components/SubmitSummary'
+import SummaryForm, { SummaryFormProps } from '../components/SubmitSummary'
 import ThemeButton from '../components/ThemeButton'
 import { DISCORD_SERVER_INVITE } from '../lib/consts'
+import prisma from '../lib/db'
 
-const Home = () => {
+type Data = {
+  tags: SummaryFormProps['tags']
+}
+
+const Home = ({ tags }: Data) => {
   const [session] = useSession()
 
   if (!session) {
@@ -48,10 +54,22 @@ const Home = () => {
         justify="center"
         w="100%"
       >
-        <SummaryForm />
+        <SummaryForm tags={tags} />
       </Flex>
     </Flex>
   )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  // get all the tags to choose from
+  const tags = await prisma.tag.findMany({ select: { id: true, name: true } })
+
+  return {
+    props: {
+      tags,
+    },
+    revalidate: 60 * 60,
+  }
 }
 
 export default Home

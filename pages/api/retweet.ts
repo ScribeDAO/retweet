@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Twitter from 'twitter-lite'
+import prisma from '../../lib/db'
 
 // For some weird reason we need `toString` env variables strings
 const client = new Twitter({
@@ -15,16 +16,48 @@ export default async function handler(
 ) {
   // Process a POST request
   if (req.method === 'POST') {
+    const body = JSON.parse(req.body)
+
     // Grab the tweetId from the request body
-    const tweetId = JSON.parse(req.body).tweet_id
-    // Retweet the tweet
+    const tweetId = body.tweet_id as string
+    const accessToken = body.access_token as string
+    const tagId = body.category_id as string
+    const sessionUser = await prisma.session.findFirst({
+      where: { accessToken },
+    })
+
+    if (!sessionUser) {
+      return res.status(401).json({ message: 'Invalid access token' })
+    }
+
     try {
-      const result = await client.post('statuses/retweet', {
-        id: tweetId.toString(),
+      // we put this in a transaction since all these actions must succeed for this to write to the db
+      await prisma.$transaction([
+        // store the post in DB
+        prisma.post.create({
+          data: {
+            tweetId: tweetId,
+            author: {
+              connect: {
+                id: sessionUser!.userId,
+              },
+            },
+            tags: {
+              connect: [{ id: tagId }],
+            },
+          },
+        }),
+        // Retweet the tweet
+        await client.post('statuses/retweet', {
+          id: tweetId.toString(),
+        }),
+      ])
+
+      return res.status(200).json({ message: 'Success' })
+    } catch (e: any) {
+      return res.status(500).json({
+        message: e.message || e.errors[0].message || JSON.stringify(e),
       })
-      res.status(200).json(result)
-    } catch (err) {
-      return res.status(500).json({ message: err.errors[0].message })
     }
   } else {
     res
