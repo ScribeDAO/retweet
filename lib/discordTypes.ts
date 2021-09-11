@@ -1,14 +1,3 @@
-// https://discord.com/developers/docs/resources/user#get-current-user-guilds
-export type CurrentUserGuilds = {
-  id: string
-  name: string
-  icon: string
-  owner: boolean
-  permissions: number
-  features: string[]
-  permissions_new: string
-}
-
 // https://discord.com/developers/docs/resources/user#user-object
 export type User = {
   id: string
