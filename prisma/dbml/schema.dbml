@@ -42,6 +42,7 @@ Table User {
   accounts Account [not null]
   sessions Session [not null]
   posts Post [not null]
+  roles Roles [not null]
 }
 
 Table VerificationRequest {
@@ -73,6 +74,20 @@ Table Tag {
   posts Post [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+}
+
+Table Roles {
+  id String [pk]
+  name String [not null]
+  discordId String [unique, not null]
+  users User [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table RolesToUser {
+  rolesId String [ref: > Roles.id]
+  usersId String [ref: > User.id]
 }
 
 Table PostToTag {

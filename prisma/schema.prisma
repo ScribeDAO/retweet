@@ -53,6 +53,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   posts         Post[]
+  roles         Roles[]
 }
 
 model VerificationRequest {
@@ -87,6 +88,17 @@ model Tag {
   name String
 
   posts Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Roles {
+  id        String @id @default(cuid())
+  name      String
+  discordId String @unique // Role ID in discord
+
+  users User[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
