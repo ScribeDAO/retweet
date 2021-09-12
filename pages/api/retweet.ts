@@ -56,6 +56,7 @@ export default async function handler(
       return res.status(200).json({ message: 'Success' })
     } catch (e: any) {
       return res.status(500).json({
+        // I wish error objects were consistent :|
         message: e.message || e.errors[0].message || JSON.stringify(e),
       })
     }

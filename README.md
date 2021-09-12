@@ -29,13 +29,29 @@ Want to help out? Let's setup this project!
 5. You need to also fill in the `.env` file Discord Credentials. You can get those from the ScribeDAO App on [Discord Developer Portal](https://discord.com/developers/applications/885344846024437791/oauth2)
 6. Run `yarn dev` to start the server and open the browser. Happy coding!
 
-### Learn More
+### Design and Architecture
 
-To learn more about Next.js, take a look at the following resources:
+- For Database we use MySQL (that is what planetscale offers currently).
+- Prisma v2 ORM is used.
+  - You can find database schema in [`prisma/schema.prisma`](./prisma/schema.prisma). There is a DBML version in [`prisma/dbml/schema.dbml`](./prisma/dbml/schema.dbml) also generated which you can use to visualize the schema in [DB Diagram](https://dbdiagram.io/)/
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+#### Login Flow
+
+- User logs in with discord
+- We use our Bot to check if the users is in our server
+- Then we check if the user has Knowledge Seeker or above role, if so they are logged in.
+- When user account is created and linked in DB we grab user's roles from Discord and link them to user in DB.
+  - Flaws: If user's role is updated we can't automatically update in DB. Read more in this issue [#5](https://github.com/ScribeDAO/retweet/issues/5)
 
 ### Deploying to Production
 
 We use [Vercel](https://vercel.com/) to deploy this project to production. We have GitHub Actions to deploy to production.
 For database Vercel will connect to MySQL instance running in [planetscale](https://planetscale.com)
+
+### Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Prisma Documentation](https://docs.prisma.io)
+- [NextAuth.js `v3`](https://next-auth.js.org/v3/getting-started/introduction)
