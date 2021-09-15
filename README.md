@@ -9,6 +9,7 @@ Want to help out? Let's setup this project!
 - [Git](https://git-scm.com)
 - [Node.js](https://nodejs.org) `<=14.x`
 - [yarn](https://yarnpkg.com)
+- [pscale](https://planetscale.com/cli)
 
 #### Recommended
 
