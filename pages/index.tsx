@@ -31,7 +31,7 @@ const Home = ({ tags }: Data) => {
           w="100%"
         >
           <Heading size="md" mb={2}>
-            You need Knowledge Seeker role in{' '}
+            You need have Scribe role in{' '}
             <Link href={DISCORD_SERVER_INVITE} isExternal>
               Discord <ExternalLinkIcon marginBottom="0.3rem" />{' '}
             </Link>
