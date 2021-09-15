@@ -1,34 +1,58 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Tool to automate assignment of articles, manage summaries, provide an API for content and sharing them on [@scribeDAO](https://twitter.com/scribeDAO). If you have any questions or want to help out join us on Discord [#automation](https://discord.com/invite/ySFKTEyGn8)
 
 ## Getting Started
 
-First, run the development server:
+Want to help out? Let's setup this project!
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- [Git](https://git-scm.com)
+- [Node.js](https://nodejs.org) `<=14.x`
+- [yarn](https://yarnpkg.com)
+- [pscale](https://planetscale.com/cli)
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+#### Recommended
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- [Visual Studio Code](https://code.visualstudio.com)
+- [docker](https://www.docker.com)
+  - [`docker-compose`](https://docs.docker.com/compose/install/)
+- [GitHub CLI](https://cli.github.com)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Running this project
 
-## Learn More
+1. Clone the repository
+2. Run `yarn` to install dependencies
+3. Copy `.env.local.example` to `.env` and fill in the values
+4. You will need a MySQL database. You can:
+   1. Install MySQL locally OR
+   2. Run it in a docker container. There is a `db/docker-compose.yml`. You can run `cd db && docker-compose pull` to install and then `yarn start:db` to start the server. OR
+   3. Use a remote database service like [planetscale](https://planetscale.com)
+5. You need to also fill in the `.env` file Discord Credentials. You can get those from the ScribeDAO App on [Discord Developer Portal](https://discord.com/developers/applications/885344846024437791/oauth2)
+6. Run `yarn dev` to start the server and open the browser. Happy coding!
+
+### Design and Architecture
+
+- For Database we use MySQL (that is what planetscale offers currently).
+- Prisma v2 ORM is used.
+  - You can find database schema in [`prisma/schema.prisma`](./prisma/schema.prisma). There is a DBML version in [`prisma/dbml/schema.dbml`](./prisma/dbml/schema.dbml) also generated which you can use to visualize the schema in [DB Diagram](https://dbdiagram.io/)/
+
+#### Login Flow
+
+- User logs in with discord
+- We use our Bot to check if the users is in our server
+- Then we check if the user has Knowledge Seeker or above role, if so they are logged in.
+- When user account is created and linked in DB we grab user's roles from Discord and link them to user in DB.
+  - Flaws: If user's role is updated we can't automatically update in DB. Read more in this issue [#5](https://github.com/ScribeDAO/retweet/issues/5)
+
+### Deploying to Production
+
+We use [Vercel](https://vercel.com/) to deploy this project to production. We have GitHub Actions to deploy to production.
+For database Vercel will connect to MySQL instance running in [planetscale](https://planetscale.com)
+
+### Learn More
 
 To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- [Prisma Documentation](https://docs.prisma.io)
+- [NextAuth.js `v3`](https://next-auth.js.org/v3/getting-started/introduction)

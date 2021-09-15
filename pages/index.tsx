@@ -1,115 +1,51 @@
-import { MoonIcon, SunIcon, ExternalLinkIcon } from '@chakra-ui/icons'
-import { useRef } from 'react'
-import {
-  Button,
-  Flex,
-  Heading,
-  useColorMode,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-  Input,
-  Link,
-  createStandaloneToast,
-  chakra,
-} from '@chakra-ui/react'
-import { Field, Formik, Form } from 'formik'
-import Reward from 'react-rewards'
+import { GetStaticProps } from 'next'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { Flex, Heading, Link } from '@chakra-ui/react'
+import { useSession } from 'next-auth/client'
+import DiscordButton from '../components/LoginWithDiscord'
+import Navbar from '../components/Navbar'
+import SummaryForm, { SummaryFormProps } from '../components/SubmitSummary'
+import ThemeButton from '../components/ThemeButton'
+import { DISCORD_SERVER_INVITE } from '../lib/consts'
+import prisma from '../lib/db'
 
-const SummaryForm = () => {
-  const yay = useRef()
-  const toast = createStandaloneToast()
+type Data = {
+  tags: SummaryFormProps['tags']
+}
 
-  const validateTwitterUrl = (value: string) => {
-    const match = value.match(/\/status\/(\d+)/)
-    if (!match) return 'Gm! We need a twitter thread please. ✌'
+const Home = ({ tags }: Data) => {
+  const [session] = useSession()
+
+  if (!session) {
+    return (
+      <Flex height="100vh" direction="column">
+        <Flex justify="flex-end" marginX="1rem" marginTop="1rem">
+          <ThemeButton />
+        </Flex>
+        <Flex
+          marginTop="-1rem"
+          margin="auto"
+          direction="column"
+          align="center"
+          justify="center"
+          w="100%"
+        >
+          <Heading size="md" mb={2}>
+            You need have Scribe role in{' '}
+            <Link href={DISCORD_SERVER_INVITE} isExternal>
+              Discord <ExternalLinkIcon marginBottom="0.3rem" />{' '}
+            </Link>
+            to get started
+          </Heading>
+          <DiscordButton />
+        </Flex>
+      </Flex>
+    )
   }
 
   return (
-    <Formik
-      initialValues={{ url: '' }}
-      onSubmit={async (values, actions) => {
-        const res = await fetch('/api/retweet', {
-          method: 'POST',
-          body: JSON.stringify({
-            tweet_id: values.url.match(/\/status\/(\d+)/)![1],
-          }),
-        })
-
-        actions.setSubmitting(false)
-
-        if (res.status >= 400) {
-          const body = await res.json()
-          toast({
-            title: 'An error occurred.',
-            description: body.message,
-            status: 'error',
-            duration: 2000,
-            isClosable: true,
-          })
-          // @ts-ignore -  we know this exists find a better way to type this
-          yay.current.punishMe()
-        } else {
-          // @ts-ignore - we know this exists find a better way to type this
-          yay.current.rewardMe()
-        }
-      }}
-    >
-      {(props) => (
-        <Form style={{ width: '70%' }}>
-          <FormControl>
-            <FormLabel htmlFor="url">Summary Link</FormLabel>
-            <Flex>
-              <Field name="url" validate={validateTwitterUrl}>
-                {/* @ts-ignore TODO: improve typings */}
-                {({ field, form }) => (
-                  <FormControl isInvalid={form.errors.url && form.touched.url}>
-                    <Input {...field} id="url" placeholder="Tweet URL" />
-                    <FormErrorMessage>{form.errors.url}</FormErrorMessage>
-                  </FormControl>
-                )}
-              </Field>
-              <Reward
-                // @ts-ignore TODO: improve typings
-                ref={yay}
-                type="confetti"
-                config={{ spread: 135, elementCount: 900 }}
-              >
-                <Button
-                  colorScheme="teal"
-                  isLoading={props.isSubmitting}
-                  type="submit"
-                  marginLeft="1rem"
-                >
-                  Submit
-                </Button>
-              </Reward>
-            </Flex>
-            <FormHelperText>
-              Paste the link to your summary so we can retweet it{' '}
-              <Link href="https://twitter.com/scribeDAO" isExternal>
-                @ScribeDAO
-                <ExternalLinkIcon marginBottom="0.2rem" mx="2px" />
-              </Link>
-            </FormHelperText>
-          </FormControl>
-        </Form>
-      )}
-    </Formik>
-  )
-}
-
-const Home = () => {
-  const { colorMode, toggleColorMode } = useColorMode()
-
-  return (
     <Flex height="100vh" direction="column">
-      <Flex justify="flex-end" marginX="1rem" marginTop="1rem">
-        <Button onClick={toggleColorMode}>
-          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-        </Button>
-      </Flex>
+      <Navbar />
       <Flex
         marginTop="-1rem"
         margin="auto"
@@ -118,10 +54,22 @@ const Home = () => {
         justify="center"
         w="100%"
       >
-        <SummaryForm />
+        <SummaryForm tags={tags} />
       </Flex>
     </Flex>
   )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  // get all the tags to choose from
+  const tags = await prisma.tag.findMany({ select: { id: true, name: true } })
+
+  return {
+    props: {
+      tags,
+    },
+    revalidate: 60 * 60,
+  }
 }
 
 export default Home
