@@ -68,6 +68,7 @@ export default NextAuth({
 
       const roleExistence = user.roles.map((role) => {
         switch (role) {
+          case ServerRoleIds.SCRIBE:
           case ServerRoleIds.DAOIST:
           case ServerRoleIds.KNOWLEDGE_SEEKER:
             return true
