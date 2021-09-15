@@ -30,36 +30,39 @@ export default async function handler(
       return res.status(401).json({ message: 'Invalid access token' })
     }
 
+    // store the post in DB
     try {
-      // we put this in a transaction since all these actions must succeed for this to write to the db
-      await prisma.$transaction([
-        // store the post in DB
-        prisma.post.create({
-          data: {
-            tweetId: tweetId,
-            author: {
-              connect: {
-                id: sessionUser!.userId,
-              },
-            },
-            tags: {
-              connect: [{ id: tagId }],
+      await prisma.post.create({
+        data: {
+          tweetId: tweetId,
+          author: {
+            connect: {
+              id: sessionUser!.userId,
             },
           },
-        }),
-        // Retweet the tweet
-        await client.post('statuses/retweet', {
-          id: tweetId.toString(),
-        }),
-      ])
-
-      return res.status(200).json({ message: 'Success' })
+          tags: {
+            connect: [{ id: tagId }],
+          },
+        },
+      })
     } catch (e: any) {
       return res.status(500).json({
-        // I wish error objects were consistent :|
-        message: e.message || e.errors[0].message || JSON.stringify(e),
+        message: e.message,
       })
     }
+
+    // Retweet the tweet
+    try {
+      await client.post('statuses/retweet', {
+        id: tweetId.toString(),
+      })
+    } catch (e: any) {
+      return res.status(500).json({
+        message: e.errors[0].message || JSON.stringify(e),
+      })
+    }
+
+    return res.status(200).json({ message: 'Success' })
   } else {
     res
       .status(400)
