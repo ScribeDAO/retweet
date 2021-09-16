@@ -49,6 +49,40 @@ Want to help out? Let's setup this project!
 We use [Vercel](https://vercel.com/) to deploy this project to production. We have GitHub Actions to deploy to production.
 For database Vercel will connect to MySQL instance running in [planetscale](https://planetscale.com)
 
+#### Applying DB migrations
+
+We use [`prisma migrate`](https://prisma.io/docs/reference/cli/migrate/) to apply migrations. Please do not apply migrations in production.
+
+- Login to PlanetScale `pscale login`
+- Create 2 branches from `main` one feature branch and other `shadow`
+  - `pscale branch create scribedao-prod <FEATURE_NAME>`
+  - `pscale branch create scribedao-prod shadow`
+- Now connect to the branches so you can connect to DB locally.
+  - `pscale connect scribedao-prod <FEATURE_NAME> --port 3309`
+  - `pscale connect scribedao-prod shadow --port 3310`
+- Now get that status of last applied migration
+  - `yarn prisma migrate status`
+- Set baseline to that migration
+  - `yarn prisma migrate resolve --applied <SEE_TERMINAL_OUTPUT_FROM_LAST_STEP>`
+- Now apply new migrations
+  - `yarn prisma migrate deploy`
+- Create a Deploy request (kinda like a PR but for DB)
+  - `pscale deploy-request create scribedao-prod <FEATURE_NAME>`
+- Now just need to merge your code on GitHub and apply those DB changes and we are done!
+
+#### Applying seed data or making changes using prisma studio
+
+**WARNING**: You will be connecting and updating prod database
+
+- Create a `shadow` branch from `main`
+  - `pscale branch create scribedao-prod shadow`
+- Now connect to the branches so you can connect to DB locally.
+  - `pscale connect scribedao-prod main --port 3309`
+  - `pscale connect scribedao-prod shadow --port 3310`
+- `yarn prisma db seed`
+- You can view your change in prisma studio
+  - `yarn prisma studio`
+
 ### Learn More
 
 To learn more about Next.js, take a look at the following resources:
@@ -56,3 +90,4 @@ To learn more about Next.js, take a look at the following resources:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Prisma Documentation](https://docs.prisma.io)
 - [NextAuth.js `v3`](https://next-auth.js.org/v3/getting-started/introduction)
+- [PlanetScale applying prisma migrations](https://docs.planetscale.com/tutorials/automatic-prisma-migrations)
