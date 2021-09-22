@@ -1,4 +1,3 @@
-import { Roles, User } from '.prisma/client'
 import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 import {
   connectionArgs,
@@ -36,12 +35,12 @@ export const RoleType = new GraphQLObjectType<any, GraphQLContext>({
       args: connectionArgs,
       type: UserConnection,
       resolve: async (role, args, { prisma }) => {
-        const userIds = role.users.map((user: User) => user.id)
-        const users = await prisma.user.findMany({
-          where: { id: { in: userIds } },
+        const roleObject = await prisma.roles.findFirst({
+          where: { id: role.id },
+          include: { users: true },
         })
 
-        return connectionFromArray(users, args)
+        return connectionFromArray(roleObject!.users, args)
       },
     },
   }),

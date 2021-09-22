@@ -1,4 +1,3 @@
-import { Post } from '.prisma/client'
 import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 import {
   connectionArgs,
@@ -34,15 +33,9 @@ export const TagType = new GraphQLObjectType<any, GraphQLContext>({
       args: connectionArgs,
       type: PostConnection,
       resolve: async (tag, args, { prisma }) => {
-        const postIds = tag.posts.map((post: Post) => post.id)
-
-        const posts = await prisma.post.findMany({
-          where: { id: { in: postIds } },
-          include: {
-            tags: { select: { id: true } },
-            author: { select: { id: true } },
-          },
-        })
+        const posts = await prisma.tag
+          .findUnique({ where: { id: tag.id } })
+          .posts()
 
         return connectionFromArray(posts, args)
       },

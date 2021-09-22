@@ -31,22 +31,7 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
       args: connectionArgs,
       type: PostConnection,
       resolve: async (_, args, { prisma }) => {
-        const posts = await prisma.post.findMany({
-          include: {
-            author: {
-              include: {
-                posts: {
-                  select: { id: true },
-                },
-                roles: {
-                  select: { id: true },
-                },
-              },
-            },
-            tags: { select: { id: true } },
-          },
-        })
-
+        const posts = await prisma.post.findMany()
         return connectionFromArray(posts, args)
       },
     },
@@ -57,32 +42,14 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
       type: PostType,
       resolve: async (_, { id }, { prisma }) => {
         const { id: postId } = fromGlobalId(id)
-        const post = await prisma.post.findUnique({
-          where: { id: postId },
-          include: {
-            author: {
-              include: {
-                posts: {
-                  select: { id: true },
-                },
-                roles: {
-                  select: { id: true },
-                },
-              },
-            },
-            tags: { select: { id: true } },
-          },
-        })
-        return post
+        return await prisma.post.findUnique({ where: { id: postId } })
       },
     },
     tags: {
       args: connectionArgs,
       type: TagConnection,
       resolve: async (_, args, { prisma }) => {
-        const tags = await prisma.tag.findMany({
-          include: { posts: { select: { id: true } } },
-        })
+        const tags = await prisma.tag.findMany()
         return connectionFromArray(tags, args)
       },
     },
@@ -93,11 +60,7 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
       type: TagType,
       resolve: async (_, { id }, { prisma }) => {
         const { id: tagId } = fromGlobalId(id)
-        const tag = await prisma.tag.findUnique({
-          where: { id: tagId },
-          include: { posts: { select: { id: true } } },
-        })
-        return tag
+        return await prisma.tag.findUnique({ where: { id: tagId } })
       },
     },
   }),
