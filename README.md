@@ -83,6 +83,14 @@ We use [`prisma migrate`](https://prisma.io/docs/reference/cli/migrate/) to appl
 - You can view your change in prisma studio
   - `yarn prisma studio`
 
+#### Monitoring
+
+We use Sentry for errors and performance monitoring.
+
+- API: https://sentry.io/organizations/scribedao/projects/graphql-api/?project=5978462
+
+Note: currently this is on personal account we need to move to Open Source account.
+
 ### Learn More
 
 To learn more about Next.js, take a look at the following resources:
