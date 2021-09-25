@@ -802,13 +802,13 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@graphql-ez/plugin-graphiql@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@graphql-ez/plugin-graphiql/-/plugin-graphiql-0.10.0.tgz#5c35854dba892ed6fca87e192cb5a3dbdd7e00cf"
-  integrity sha512-BKi00apX59rjfUDOhDAax3oo9bSdLpMLRud001dcFGpkwurC/T0QFaGNUYByCy6W6C5rUrrepxv7idqJ3Wp/tg==
+"@graphql-ez/plugin-graphiql@^0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@graphql-ez/plugin-graphiql/-/plugin-graphiql-0.10.1.tgz#982853878b3a36e22c0a00852281fe17177d9f92"
+  integrity sha512-mUDcod+pNPS60+oPomxOnydj9DDmXatrpe+GcfGbvYla5hiIcfN5avs5pvbtEwAj5b8VmdbikoP8aXzJoZGBjg==
   dependencies:
     "@graphql-ez/utils" "^0.1.2"
-    "@pablosz/graphql-helix-graphiql" "^4.0.1"
+    "@pablosz/graphql-helix-graphiql" "^4.0.2"
 
 "@graphql-ez/plugin-schema@^0.7.3":
   version "0.7.3"
@@ -984,10 +984,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@pablosz/graphql-helix-graphiql@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@pablosz/graphql-helix-graphiql/-/graphql-helix-graphiql-4.0.1.tgz#d166416827c3954cc200f9a188ab8a25eab58f70"
-  integrity sha512-BzmwkFqJQ1aDLFLlGFd4w2I4r+SYlLeS3b7rardxcYgsIeVW18Zmu+9O/rpRJ00DbkNXSRr6pdQWQCe6V24vew==
+"@pablosz/graphql-helix-graphiql@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@pablosz/graphql-helix-graphiql/-/graphql-helix-graphiql-4.0.2.tgz#c19e4bcbdf751ce9b9fad986cc055165cde2667b"
+  integrity sha512-qK2VXx7wQv+z7HbHKJQT7EHbXsNFQhJxdD9S8Cv1Q8ItIkhnpnnELs7D3OsmjSIKHElturYPWH8bdQDFvwmfnA==
   dependencies:
     "@graphql-ez/utils" "^0.1.2"
     filedirname "2.7.0"
