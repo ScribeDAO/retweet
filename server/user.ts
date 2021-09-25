@@ -2,7 +2,6 @@ import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 import {
   connectionArgs,
   connectionDefinitions,
-  connectionFromArray,
   globalIdField,
 } from 'graphql-relay'
 import {
@@ -10,6 +9,7 @@ import {
   GraphQLEmailAddress,
   GraphQLURL,
 } from 'graphql-scalars'
+import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection'
 import { MetaNodeInterface, NodeInterface, TypeNames } from './shared'
 import { RoleConnection } from './role'
 import { GraphQLContext } from './context'
@@ -45,22 +45,28 @@ export const UserType = new GraphQLObjectType<any, GraphQLContext>({
       args: connectionArgs,
       type: RoleConnection,
       resolve: async (user, args, { prisma }) => {
-        const roles = await prisma.user
-          .findUnique({ where: { id: user.id } })
-          .roles()
+        const roles = await findManyCursorConnection(
+          (args) =>
+            prisma.user.findFirst({ ...args, where: { id: user.id } }).roles(),
+          () => prisma.roles.count(),
+          args,
+        )
 
-        return connectionFromArray(roles, args)
+        return roles
       },
     },
     posts: {
       args: connectionArgs,
       type: PostConnection,
       resolve: async (user, args, { prisma }) => {
-        const posts = await prisma.user
-          .findUnique({ where: { id: user.id } })
-          .posts()
+        const posts = await findManyCursorConnection(
+          (args) =>
+            prisma.user.findFirst({ ...args, where: { id: user.id } }).posts(),
+          () => prisma.post.count(),
+          args,
+        )
 
-        return connectionFromArray(posts, args)
+        return posts
       },
     },
   }),

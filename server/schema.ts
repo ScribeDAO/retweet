@@ -4,11 +4,8 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
 } from 'graphql'
-import {
-  connectionArgs,
-  connectionFromArray,
-  fromGlobalId,
-} from 'graphql-relay'
+import { connectionArgs, fromGlobalId } from 'graphql-relay'
+import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection'
 import { PostConnection, PostType } from './post'
 import { TagConnection, TagType } from './tag'
 import { TypeNames } from './shared'
@@ -31,8 +28,13 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
       args: connectionArgs,
       type: PostConnection,
       resolve: async (_, args, { prisma }) => {
-        const posts = await prisma.post.findMany()
-        return connectionFromArray(posts, args)
+        const posts = await findManyCursorConnection(
+          (args) => prisma.post.findMany({ ...args }),
+          () => prisma.post.count(),
+          args,
+        )
+
+        return posts
       },
     },
     post: {
@@ -49,8 +51,13 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
       args: connectionArgs,
       type: TagConnection,
       resolve: async (_, args, { prisma }) => {
-        const tags = await prisma.tag.findMany()
-        return connectionFromArray(tags, args)
+        const tags = await findManyCursorConnection(
+          (args) => prisma.tag.findMany({ ...args }),
+          () => prisma.tag.count(),
+          args,
+        )
+
+        return tags
       },
     },
     tag: {

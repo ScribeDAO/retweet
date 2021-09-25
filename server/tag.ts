@@ -2,10 +2,10 @@ import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 import {
   connectionArgs,
   connectionDefinitions,
-  connectionFromArray,
   globalIdField,
 } from 'graphql-relay'
 import { GraphQLDateTime } from 'graphql-scalars'
+import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection'
 import { GraphQLContext } from './context'
 import { PostConnection } from './post'
 import { MetaNodeInterface, NodeInterface, TypeNames } from './shared'
@@ -33,11 +33,14 @@ export const TagType = new GraphQLObjectType<any, GraphQLContext>({
       args: connectionArgs,
       type: PostConnection,
       resolve: async (tag, args, { prisma }) => {
-        const posts = await prisma.tag
-          .findUnique({ where: { id: tag.id } })
-          .posts()
+        const posts = await findManyCursorConnection(
+          (args) =>
+            prisma.tag.findFirst({ ...args, where: { id: tag.id } }).posts(),
+          () => prisma.post.count(),
+          args,
+        )
 
-        return connectionFromArray(posts, args)
+        return posts
       },
     },
   }),

@@ -633,6 +633,11 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
+"@devoxa/prisma-relay-cursor-connection@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@devoxa/prisma-relay-cursor-connection/-/prisma-relay-cursor-connection-2.0.3.tgz#f50fe6e83da6478427a2d2b6c3f0cbcd07668860"
+  integrity sha512-eHAYAsr6Wii/c+Q0E5niI4rRtrrmMRx3XbsJXSBK8JyXr8eN4VhshhLWyh/xMD4vaPgBvzfFqRuOeNlMxfX6lQ==
+
 "@emotion/babel-plugin@^11.3.0":
   version "11.3.0"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.3.0.tgz#3a16850ba04d8d9651f07f3fb674b3436a4fb9d7"

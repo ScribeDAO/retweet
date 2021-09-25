@@ -2,10 +2,10 @@ import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 import {
   connectionArgs,
   connectionDefinitions,
-  connectionFromArray,
   globalIdField,
 } from 'graphql-relay'
 import { GraphQLDateTime } from 'graphql-scalars'
+import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection'
 import { GraphQLContext } from './context'
 import { MetaNodeInterface, NodeInterface, TypeNames } from './shared'
 import { UserConnection } from './user'
@@ -35,12 +35,14 @@ export const RoleType = new GraphQLObjectType<any, GraphQLContext>({
       args: connectionArgs,
       type: UserConnection,
       resolve: async (role, args, { prisma }) => {
-        const roleObject = await prisma.roles.findFirst({
-          where: { id: role.id },
-          include: { users: true },
-        })
+        const users = await findManyCursorConnection(
+          (args) =>
+            prisma.roles.findFirst({ ...args, where: { id: role.id } }).users(),
+          () => prisma.user.count(),
+          args,
+        )
 
-        return connectionFromArray(roleObject!.users, args)
+        return users
       },
     },
   }),
