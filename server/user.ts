@@ -4,11 +4,7 @@ import {
   connectionDefinitions,
   globalIdField,
 } from 'graphql-relay'
-import {
-  GraphQLDateTime,
-  GraphQLEmailAddress,
-  GraphQLURL,
-} from 'graphql-scalars'
+import { GraphQLDateTime, GraphQLURL } from 'graphql-scalars'
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection'
 import { MetaNodeInterface, NodeInterface, TypeNames } from './shared'
 import { RoleConnection } from './role'
@@ -22,9 +18,7 @@ import { PostConnection } from './post'
  *   createdAt: DateTime!
  *   updatedAt: DateTime!
  *   name: String!
- *   email: EmailAddress!
  *   image: URL!
- *   emailVerified: DateTime
  *   roles(after: String, first: Int, before: String, last: Int): RoleConnection
  *   posts(after: String, first: Int, before: String, last: Int): PostConnection
  * }
@@ -38,8 +32,9 @@ export const UserType = new GraphQLObjectType<any, GraphQLContext>({
     createdAt: { type: GraphQLNonNull(GraphQLDateTime) },
     updatedAt: { type: GraphQLNonNull(GraphQLDateTime) },
     name: { type: GraphQLNonNull(GraphQLString) },
-    email: { type: GraphQLNonNull(GraphQLEmailAddress) },
-    emailVerified: { type: GraphQLDateTime },
+    // Do not add because of privacy reasons
+    // email: { type: GraphQLNonNull(GraphQLEmailAddress) },
+    // emailVerified: { type: GraphQLDateTime },
     image: { type: GraphQLNonNull(GraphQLURL) },
     roles: {
       args: connectionArgs,
