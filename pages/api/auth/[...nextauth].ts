@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
+import { withSentry } from '@sentry/nextjs'
 import {
   SERVER_GUILD_ID,
   DISCORD_API_BASE,
@@ -9,7 +10,7 @@ import type { GuildMember } from '../../../lib/discordTypes'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import prisma from '../../../lib/db'
 
-export default NextAuth({
+const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     Providers.Discord({
@@ -81,3 +82,6 @@ export default NextAuth({
     },
   },
 })
+
+// @ts-ignore - this handler works as next api handler
+export default withSentry(handler)

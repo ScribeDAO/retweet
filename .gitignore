@@ -36,3 +36,6 @@ yarn-error.log*
 
 # local db
 /db/data/
+
+# Sentry
+.sentryclirc

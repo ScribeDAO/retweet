@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { withSentry, captureException } from '@sentry/nextjs'
 import Twitter from 'twitter-lite'
 import prisma from '../../lib/db'
 
@@ -10,10 +11,7 @@ const client = new Twitter({
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET!.toString(),
 })
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Process a POST request
   if (req.method === 'POST') {
     const body = JSON.parse(req.body)
@@ -46,6 +44,7 @@ export default async function handler(
         },
       })
     } catch (e: any) {
+      captureException(e)
       return res.status(500).json({
         message: e.message,
       })
@@ -57,6 +56,7 @@ export default async function handler(
         id: tweetId.toString(),
       })
     } catch (e: any) {
+      captureException(e)
       return res.status(500).json({
         message: e.errors[0].message || JSON.stringify(e),
       })
@@ -69,3 +69,5 @@ export default async function handler(
       .json({ message: 'Make a POST request to retweet a thread.' })
   }
 }
+
+export default withSentry(handler)
