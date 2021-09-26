@@ -8,8 +8,11 @@ jobs:
   check-schema:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Inspect Schema changes
         uses: kamilkisiela/graphql-inspector@master
         with:
-          schema: 'schema.graphql'
+          schema: 'schema.graphql' # important to define a path to schema file, without a branch
           endpoint: 'https://retweet.scribedao.com/api/graphql'
