@@ -1,0 +1,9 @@
+name: scribedao
+originUrl: 'https://retweet.scribedao.com/api/graphql'
+rules:
+  - description: Cache everything (default)
+    maxAge: 900
+    swr: 900
+    types:
+      Query: true
+schema: 'https://retweet.scribedao.com/api/graphql'
