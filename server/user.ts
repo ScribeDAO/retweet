@@ -34,7 +34,7 @@ export const UserType = new GraphQLObjectType<any, GraphQLContext>({
     name: { type: GraphQLNonNull(GraphQLString) },
     // Do not add because of privacy reasons
     // email: { type: GraphQLNonNull(GraphQLEmailAddress) },
-    // emailVerified: { type: GraphQLDateTime },
+    emailVerified: { type: GraphQLDateTime },
     image: { type: GraphQLNonNull(GraphQLURL) },
     roles: {
       args: connectionArgs,
