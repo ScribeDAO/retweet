@@ -21,3 +21,8 @@ jobs:
           vercel-args: '--prod'
           github-comment: false # No need to comment preview link
           working-directory: ./
+
+      - name: Push schema
+        run: npx graphcdn push schema
+        env:
+          GRAPHCDN_TOKEN: ${{ secrets.GRAPHCDN_TOKEN }}
