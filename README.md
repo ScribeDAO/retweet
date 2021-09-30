@@ -83,6 +83,16 @@ We use [`prisma migrate`](https://prisma.io/docs/reference/cli/migrate/) to appl
 - You can view your change in prisma studio
   - `yarn prisma studio`
 
+#### Create a branch with Prod data
+
+- Get the latest backup
+  - `pscale backup list scribedao-prod main`
+- Create new branch
+  - `pscale backup restore scribedao-prod dev <BACKUP_ID>`
+  - `pscale backup restore scribedao-prod shadow <BACKUP_ID>`
+
+More: https://github.com/planetscale/beta/discussions/112
+
 #### Monitoring
 
 We use Sentry for errors and performance monitoring.
