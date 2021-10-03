@@ -2,18 +2,18 @@ import { GetStaticProps } from 'next'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Flex, Heading, Link } from '@chakra-ui/react'
 import { useSession } from 'next-auth/client'
+import { PropsWithServerCache } from '@gqty/react'
 import DiscordButton from '../components/LoginWithDiscord'
 import Navbar from '../components/Navbar'
 import SummaryForm, { SummaryFormProps } from '../components/SubmitSummary'
 import ThemeButton from '../components/ThemeButton'
 import { DISCORD_SERVER_INVITE } from '../lib/consts'
-import prisma from '../lib/db'
+import { useHydrateCache, prepareReactRender, query, resolved } from '../gqty'
 
-type Data = {
-  tags: SummaryFormProps['tags']
-}
+type HomeProps = PropsWithServerCache<{ tags: SummaryFormProps['tags'] }>
 
-const Home = ({ tags }: Data) => {
+const Home = ({ tags, cacheSnapshot }: HomeProps) => {
+  useHydrateCache({ cacheSnapshot })
   const [session] = useSession()
 
   if (!session) {
@@ -62,10 +62,15 @@ const Home = ({ tags }: Data) => {
 
 export const getStaticProps: GetStaticProps = async () => {
   // get all the tags to choose from
-  const tags = await prisma.tag.findMany({ select: { id: true, name: true } })
+  const tags = await resolved(
+    () => query.tags()!.edges!.map(({ node: { id, name } }) => ({ id, name }))!,
+  )
+
+  const { cacheSnapshot } = await prepareReactRender(<Home tags={tags} />)
 
   return {
     props: {
+      cacheSnapshot,
       tags,
     },
   }
