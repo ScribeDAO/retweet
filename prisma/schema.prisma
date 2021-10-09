@@ -1,7 +1,7 @@
 datasource db {
   provider             = "mysql"
   url                  = env("DATABASE_URL")
-  shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
+  // shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
@@ -53,6 +53,8 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  interestedTags    Tag[]
   accounts      Account[]
   sessions      Session[]
   posts         Post[]
@@ -91,6 +93,7 @@ model Tag {
   name String
 
   posts Post[]
+  interestedUsers User[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

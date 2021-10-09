@@ -1,5 +1,6 @@
 import {
   GraphQLID,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
@@ -10,6 +11,7 @@ import { PostConnection, PostType } from './post'
 import { TagConnection, TagType } from './tag'
 import { TypeNames } from './shared'
 import { GraphQLContext } from './context'
+import { UserConnection, UserType } from './user'
 
 /**
  * ```graphql
@@ -70,7 +72,53 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
         return await prisma.tag.findUnique({ where: { id: tagId } })
       },
     },
+    users: {
+      args: connectionArgs,
+      type: UserConnection,
+      resolve: async (_, args, { prisma }) => {
+        const users = await findManyCursorConnection(
+          (args) => prisma.user.findMany({ ...args }),
+          () => prisma.user.count(),
+          args,
+        )
+
+        return users
+      },
+    },
   }),
 })
 
-export const schema = new GraphQLSchema({ query: QueryType })
+const MutationType = new GraphQLObjectType<any, GraphQLContext>({
+  name: TypeNames.Mutation,
+  fields: () => ({
+    updateUserCategories: {
+      type: UserType,
+      description: 'Update categories user is interested in.',
+      args: {
+        user: { type: GraphQLNonNull(GraphQLID) },
+        categories: { type: GraphQLNonNull(GraphQLList(GraphQLID)) },
+      },
+      resolve: async (_, { user, categories }, { prisma }) => {
+        const { id: userId } = fromGlobalId(user)
+        const categoriesIds = categories.map((category: string) => {
+          const { id } = fromGlobalId(category)
+          return { id: id }
+        })
+
+        return await prisma.user.update({
+          where: { id: userId },
+          data: {
+            interestedTags: {
+              set: categoriesIds,
+            },
+          },
+        })
+      },
+    },
+  }),
+})
+
+export const schema = new GraphQLSchema({
+  query: QueryType,
+  mutation: MutationType,
+})

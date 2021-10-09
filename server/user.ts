@@ -10,6 +10,7 @@ import { MetaNodeInterface, NodeInterface, TypeNames } from './shared'
 import { RoleConnection } from './role'
 import { GraphQLContext } from './context'
 import { PostConnection } from './post'
+import { TagConnection } from './tag'
 
 /**
  * ```graphql
@@ -21,6 +22,7 @@ import { PostConnection } from './post'
  *   image: URL!
  *   roles(after: String, first: Int, before: String, last: Int): RoleConnection
  *   posts(after: String, first: Int, before: String, last: Int): PostConnection
+ *   interestedTags(after: String, first: Int, before: String, last: Int): TagConnection
  * }
  * ```
  */
@@ -62,6 +64,22 @@ export const UserType = new GraphQLObjectType<any, GraphQLContext>({
         )
 
         return posts
+      },
+    },
+    interestedTags: {
+      args: connectionArgs,
+      type: TagConnection,
+      resolve: async (user, args, { prisma }) => {
+        const tags = await findManyCursorConnection(
+          (args) =>
+            prisma.user
+              .findFirst({ ...args, where: { id: user.id } })
+              .interestedTags(),
+          () => prisma.tag.count(),
+          args,
+        )
+
+        return tags
       },
     },
   }),
