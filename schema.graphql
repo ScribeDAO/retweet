@@ -236,3 +236,8 @@ type Tag implements Node & MetaNode {
     last: Int
   ): PostConnection
 }
+
+type Mutation {
+  """Update categories user is interested in"""
+  updateUserCategories(user: ID!, categories: [ID]!): User
+}
