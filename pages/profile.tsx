@@ -17,14 +17,22 @@ import { useMutation, useQuery } from '../gqty'
 const CategorySelection = () => {
   const toast = createStandaloneToast()
   const query = useQuery()
-  const myTags =
-    query.me?.interestedTags()?.edges?.map((tag) => ({
-      label: tag?.node?.name!,
-      value: tag?.node?.id!,
-    })) || []
+  const myTags = query.me?.interestedTags()?.edges?.map((tag) => {
+    if (tag?.node?.name) {
+      return {
+        label: tag?.node?.name!,
+        value: tag?.node?.id!,
+      }
+    }
+    return null
+  })
 
-  const [categories, setCategories] =
-    useState<Array<{ label: string; value: string }>>(myTags)
+  const [categories, setCategories] = useState<
+    Array<{
+      label: string
+      value: string
+    } | null>
+  >(myTags ?? [])
 
   const [categoryUpdate, { isLoading }] = useMutation(
     (mutation, args: { categories: string[] }) => {
