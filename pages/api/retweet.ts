@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Twitter from 'twitter-lite'
+import { fromGlobalId } from 'graphql-relay'
 import prisma from '../../lib/db'
 
 // For some weird reason we need `toString` env variables strings
@@ -21,7 +22,7 @@ export default async function handler(
     // Grab the tweetId from the request body
     const tweetId = body.tweet_id as string
     const accessToken = body.access_token as string
-    const tagId = body.category_id as string
+    const { id: tagId } = fromGlobalId(body.category_id as string)
     const sessionUser = await prisma.session.findFirst({
       where: { accessToken },
     })
