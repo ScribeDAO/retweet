@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { CreateApp } from '@graphql-ez/vercel'
+import { CreateApp, BuildContextArgs } from '@graphql-ez/vercel'
 import { ezSchema } from '@graphql-ez/plugin-schema'
 import { ezGraphiQLIDE } from '@graphql-ez/plugin-graphiql'
 import { useDepthLimit } from '@envelop/depth-limit'
 import { useSentry } from '@envelop/sentry'
 import { schema } from './schema'
+import { getSession } from 'next-auth/client'
 import prisma from '../lib/db'
 import * as Sentry from '@sentry/node'
 import * as Tracing from '@sentry/tracing'
@@ -19,9 +20,24 @@ if (process.env.NODE_ENV === 'production') {
 
 const ezApp = CreateApp({
   cors: true,
-  buildContext: () => {
+  buildContext: async (req) => {
+    let user = null
+
+    // Gets session info for current logged in user
+    // https://next-auth.js.org/v3/getting-started/client#getsession
+    const session = await getSession(req)
+    // This will inject current user into context
+    if (session?.accessToken) {
+      user = await prisma.session
+        .findFirst({
+          where: { accessToken: session?.accessToken as string },
+        })
+        .user()
+    }
+
     return {
       prisma,
+      user,
     }
   },
   ez: {

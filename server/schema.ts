@@ -1,5 +1,6 @@
 import {
   GraphQLID,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
@@ -10,6 +11,7 @@ import { PostConnection, PostType } from './post'
 import { TagConnection, TagType } from './tag'
 import { TypeNames } from './shared'
 import { GraphQLContext } from './context'
+import { UserConnection, UserType } from './user'
 
 /**
  * ```graphql
@@ -18,6 +20,7 @@ import { GraphQLContext } from './context'
  *   post(id: ID!): Post
  *   tags(after: String, first: Int, before: String, last: Int): TagConnection
  *   tag(id: ID!): Tag
+ *   me: User
  * }
  * ```
  */
@@ -70,7 +73,66 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
         return await prisma.tag.findUnique({ where: { id: tagId } })
       },
     },
+    users: {
+      args: connectionArgs,
+      type: UserConnection,
+      resolve: async (_, args, { prisma }) => {
+        const users = await findManyCursorConnection(
+          (args) => prisma.user.findMany({ ...args }),
+          () => prisma.user.count(),
+          args,
+        )
+
+        return users
+      },
+    },
+    me: {
+      type: UserType,
+      resolve: async (_, __, { prisma, user }) => {
+        if (!user) throw new Error('You are not logged in!')
+        return user
+      },
+    },
   }),
 })
 
-export const schema = new GraphQLSchema({ query: QueryType })
+/**
+ * ```graphql
+ * type Mutation {
+ *   updateUserCategories(categories: [ID]!): User
+ * }
+ * ```
+ */
+const MutationType = new GraphQLObjectType<any, GraphQLContext>({
+  name: TypeNames.Mutation,
+  fields: () => ({
+    updateUserCategories: {
+      type: UserType,
+      description: 'Update categories user is interested in.',
+      args: {
+        categories: { type: GraphQLNonNull(GraphQLList(GraphQLID)) },
+      },
+      resolve: async (_, { categories }, { prisma, user }) => {
+        if (!user) throw new Error('You must login to continue')
+        const categoriesIds = categories.map((category: string) => {
+          const { id } = fromGlobalId(category)
+          return { id: id }
+        })
+
+        return await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            interestedTags: {
+              set: categoriesIds,
+            },
+          },
+        })
+      },
+    },
+  }),
+})
+
+export const schema = new GraphQLSchema({
+  query: QueryType,
+  mutation: MutationType,
+})

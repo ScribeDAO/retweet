@@ -27,6 +27,20 @@ type Query {
     last: Int
   ): TagConnection
   tag(id: ID!): Tag
+  users(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the first n items from the list."""
+    first: Int
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+
+    """Returns the last n items from the list."""
+    last: Int
+  ): UserConnection
+  me: User
 }
 
 """A connection to a list of items."""
@@ -133,6 +147,19 @@ type User implements Node & MetaNode {
     """Returns the last n items from the list."""
     last: Int
   ): PostConnection
+  interestedTags(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the first n items from the list."""
+    first: Int
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+
+    """Returns the last n items from the list."""
+    last: Int
+  ): TagConnection
 }
 
 """
@@ -235,4 +262,9 @@ type Tag implements Node & MetaNode {
     """Returns the last n items from the list."""
     last: Int
   ): PostConnection
+}
+
+type Mutation {
+  """Update categories user is interested in."""
+  updateUserCategories(categories: [ID]!): User
 }

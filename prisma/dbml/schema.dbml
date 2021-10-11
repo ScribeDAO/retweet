@@ -39,6 +39,7 @@ Table User {
   image String
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  interestedTags Tag [not null]
   accounts Account [not null]
   sessions Session [not null]
   posts Post [not null]
@@ -72,6 +73,7 @@ Table Tag {
   id String [pk]
   name String [not null]
   posts Post [not null]
+  interestedUsers User [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
 }
@@ -83,6 +85,11 @@ Table Roles {
   users User [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+}
+
+Table TagToUser {
+  interestedtagsId String [ref: > Tag.id]
+  interestedusersId String [ref: > User.id]
 }
 
 Table RolesToUser {
