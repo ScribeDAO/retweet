@@ -18,8 +18,7 @@ jobs:
           vercel-token: ${{ secrets.GEL_VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.GEL_ORG_ID}}
           vercel-project-id: ${{ secrets.GEL_SCRIBE_PROJECT_ID}}
-          # TODO: Do we always need to specify this public endpoint? Does vercel not run api in build for SSR?
-          vercel-args: '--prod -e NEXT_PUBLIC_VERCEL_URL=https://scribedao.graphcdn.app'
+          vercel-args: '--prod'
           github-comment: false # No need to comment preview link
           working-directory: ./
 

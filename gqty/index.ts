@@ -8,21 +8,24 @@ import {
   SchemaObjectTypesNames,
 } from './schema.generated'
 
+// explore how we can just proxy `/api/graphql` in SSR envs
+export const API_ENDPOINT =
+  typeof window !== 'undefined'
+    ? '/api/graphql'
+    : 'https://scribedao.graphcdn.app'
+
 const queryFetcher: QueryFetcher = async function (query, variables) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/graphql`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query,
-        variables,
-      }),
-      mode: 'cors',
+  const response = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  )
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+    mode: 'cors',
+  })
 
   const json = await response.json()
 
