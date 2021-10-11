@@ -28,9 +28,11 @@ const ezApp = CreateApp({
     const session = await getSession(req)
     // This will inject current user into context
     if (session?.accessToken) {
-      user = await prisma.session.findFirst({
-        where: { accessToken: session?.accessToken as string },
-      })
+      user = await prisma.session
+        .findFirst({
+          where: { accessToken: session?.accessToken as string },
+        })
+        .user()
     }
 
     return {
