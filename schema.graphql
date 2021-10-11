@@ -265,5 +265,5 @@ type Tag implements Node & MetaNode {
 
 type Mutation {
   """Update categories user is interested in."""
-  updateUserCategories(user: ID!, categories: [ID]!): User
+  updateUserCategories(categories: [ID]!): User
 }
