@@ -63,7 +63,10 @@ const Home = ({ tags, cacheSnapshot }: HomeProps) => {
 export const getStaticProps: GetStaticProps = async () => {
   // get all the tags to choose from
   const tags = await resolved(
-    () => query.tags()!.edges!.map(({ node: { id, name } }) => ({ id, name }))!,
+    () =>
+      query
+        .tags()!
+        .edges!.map((tag) => ({ id: tag!.node!.id!, name: tag!.node!.name! }))!,
   )
 
   const { cacheSnapshot } = await prepareReactRender(<Home tags={tags} />)
