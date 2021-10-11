@@ -7,6 +7,7 @@ import {
   FormControl,
   FormLabel,
   Flex,
+  createStandaloneToast,
   Button,
 } from '@chakra-ui/react'
 import { Select } from 'chakra-react-select'
@@ -14,14 +15,40 @@ import Navbar from '../components/Navbar'
 import { useMutation, useQuery } from '../gqty'
 
 const CategorySelection = () => {
+  const toast = createStandaloneToast()
   const query = useQuery()
-  const [categories, setCategories] = useState<
-    Array<{ label: string; value: string }>
-  >([])
+  const myTags =
+    query.me?.interestedTags()?.edges?.map((tag) => ({
+      label: tag?.node?.name!,
+      value: tag?.node?.id!,
+    })) || []
 
-  const [updateUserCategories, { isLoading, data, error }] = useMutation(
-    (mutation, args: Array<{ categories: string }>) => {
-      return mutation.updateUserCategories({ ...args })
+  const [categories, setCategories] =
+    useState<Array<{ label: string; value: string }>>(myTags)
+
+  const [categoryUpdate, { isLoading }] = useMutation(
+    (mutation, args: { categories: string[] }) => {
+      const user = mutation.updateUserCategories(args)
+
+      if (user) {
+        return {
+          interestedTags: user.interestedTags()?.edges?.map((tag) => ({
+            label: tag?.node?.name,
+            value: tag?.node?.id,
+          })),
+        }
+      }
+    },
+    {
+      onCompleted() {
+        toast({ status: 'success', description: 'Categories updated' })
+      },
+      onError(error) {
+        toast({ status: 'error', description: error.message })
+      },
+      refetchQueries: [query.me],
+      awaitRefetchQueries: true,
+      suspense: false,
     },
   )
 
@@ -30,7 +57,8 @@ const CategorySelection = () => {
     .edges!.map((tag) => ({ label: tag?.node?.name, value: tag?.node?.id }))
 
   const updateCategories = () => {
-    console.log(categories)
+    const update = categories.map((category) => category.value)
+    categoryUpdate({ args: { categories: update } })
   }
 
   return (
@@ -47,7 +75,12 @@ const CategorySelection = () => {
               onChange={(e: any) => setCategories(e)}
             />
           </FormControl>
-          <Button ml="1rem" colorScheme="teal" onClick={updateCategories}>
+          <Button
+            isLoading={isLoading}
+            ml="1rem"
+            colorScheme="teal"
+            onClick={updateCategories}
+          >
             Update
           </Button>
         </Flex>

@@ -8,14 +8,12 @@ export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K]
 }
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-  {
-    [SubKey in K]?: Maybe<T[SubKey]>
-  }
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-  {
-    [SubKey in K]: Maybe<T[SubKey]>
-  }
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>
+}
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>
+}
 /** All built-in and custom scalars, mapped to their actual values */
 export interface Scalars {
   ID: string
@@ -50,8 +48,16 @@ export const generatedSchema = {
       __args: { after: 'String', first: 'Int', before: 'String', last: 'Int' },
     },
     tag: { __type: 'Tag', __args: { id: 'ID!' } },
+    users: {
+      __type: 'UserConnection',
+      __args: { after: 'String', first: 'Int', before: 'String', last: 'Int' },
+    },
+    me: { __type: 'User' },
   },
-  mutation: {},
+  mutation: {
+    __typename: { __type: 'String!' },
+    updateUserCategories: { __type: 'User', __args: { categories: '[ID]!' } },
+  },
   subscription: {},
   PostConnection: {
     __typename: { __type: 'String!' },
@@ -106,6 +112,10 @@ export const generatedSchema = {
     },
     posts: {
       __type: 'PostConnection',
+      __args: { after: 'String', first: 'Int', before: 'String', last: 'Int' },
+    },
+    interestedTags: {
+      __type: 'TagConnection',
       __args: { after: 'String', first: 'Int', before: 'String', last: 'Int' },
     },
   },
@@ -208,10 +218,35 @@ export interface Query {
     last?: Maybe<Scalars['Int']>
   }) => Maybe<TagConnection>
   tag: (args: { id: Scalars['ID'] }) => Maybe<Tag>
+  users: (args?: {
+    /**
+     * Returns the items in the list that come after the specified cursor.
+     */
+    after?: Maybe<Scalars['String']>
+    /**
+     * Returns the first n items from the list.
+     */
+    first?: Maybe<Scalars['Int']>
+    /**
+     * Returns the items in the list that come before the specified cursor.
+     */
+    before?: Maybe<Scalars['String']>
+    /**
+     * Returns the last n items from the list.
+     */
+    last?: Maybe<Scalars['Int']>
+  }) => Maybe<UserConnection>
+  me?: Maybe<User>
 }
 
 export interface Mutation {
   __typename?: 'Mutation'
+  /**
+   * Update categories user is interested in.
+   */
+  updateUserCategories: (args: {
+    categories: Array<Maybe<Scalars['ID']>>
+  }) => Maybe<User>
 }
 
 export interface Subscription {
@@ -366,6 +401,24 @@ export interface User {
      */
     last?: Maybe<Scalars['Int']>
   }) => Maybe<PostConnection>
+  interestedTags: (args?: {
+    /**
+     * Returns the items in the list that come after the specified cursor.
+     */
+    after?: Maybe<Scalars['String']>
+    /**
+     * Returns the first n items from the list.
+     */
+    first?: Maybe<Scalars['Int']>
+    /**
+     * Returns the items in the list that come before the specified cursor.
+     */
+    before?: Maybe<Scalars['String']>
+    /**
+     * Returns the last n items from the list.
+     */
+    last?: Maybe<Scalars['Int']>
+  }) => Maybe<TagConnection>
 }
 
 /**

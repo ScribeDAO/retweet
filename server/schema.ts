@@ -20,6 +20,7 @@ import { UserConnection, UserType } from './user'
  *   post(id: ID!): Post
  *   tags(after: String, first: Int, before: String, last: Int): TagConnection
  *   tag(id: ID!): Tag
+ *   me: User
  * }
  * ```
  */
@@ -85,9 +86,23 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
         return users
       },
     },
+    me: {
+      type: UserType,
+      resolve: async (_, __, { prisma, user }) => {
+        if (!user) throw new Error('You are not logged in!')
+        return user
+      },
+    },
   }),
 })
 
+/**
+ * ```graphql
+ * type Mutation {
+ *   updateUserCategories(categories: [ID]!): User
+ * }
+ * ```
+ */
 const MutationType = new GraphQLObjectType<any, GraphQLContext>({
   name: TypeNames.Mutation,
   fields: () => ({
@@ -95,18 +110,17 @@ const MutationType = new GraphQLObjectType<any, GraphQLContext>({
       type: UserType,
       description: 'Update categories user is interested in.',
       args: {
-        user: { type: GraphQLNonNull(GraphQLID) },
         categories: { type: GraphQLNonNull(GraphQLList(GraphQLID)) },
       },
-      resolve: async (_, { user, categories }, { prisma }) => {
-        const { id: userId } = fromGlobalId(user)
+      resolve: async (_, { categories }, { prisma, user }) => {
+        if (!user) throw new Error('You must login to continue')
         const categoriesIds = categories.map((category: string) => {
           const { id } = fromGlobalId(category)
           return { id: id }
         })
 
         return await prisma.user.update({
-          where: { id: userId },
+          where: { id: user.id },
           data: {
             interestedTags: {
               set: categoriesIds,
