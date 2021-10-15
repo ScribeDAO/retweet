@@ -12,6 +12,7 @@ import { TagConnection, TagType } from './tag'
 import { TypeNames } from './shared'
 import { GraphQLContext } from './context'
 import { UserConnection, UserType } from './user'
+import { StatsType } from './stats'
 
 /**
  * ```graphql
@@ -92,6 +93,11 @@ const QueryType = new GraphQLObjectType<any, GraphQLContext>({
         if (!user) throw new Error('You are not logged in!')
         return user
       },
+    },
+    stats: {
+      type: StatsType,
+      // field resolvers resolve all values so not sure what to do here
+      resolve: () => true,
     },
   }),
 })

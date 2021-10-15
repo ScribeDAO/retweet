@@ -10,6 +10,7 @@ export enum TypeNames {
   Post = 'Post',
   Tag = 'Tag',
   Role = 'Role',
+  Stats = 'Stats',
 }
 
 const { nodeInterface } = nodeDefinitions<GraphQLContext>(
