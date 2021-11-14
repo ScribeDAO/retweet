@@ -15,9 +15,9 @@ jobs:
         uses: amondnet/vercel-action@v20
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-token: ${{ secrets.GEL_VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.GEL_ORG_ID}}
-          vercel-project-id: ${{ secrets.GEL_SCRIBE_PROJECT_ID}}
+          vercel-token: ${{ secrets.SPS_VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.SPS_ORG_ID}}
+          vercel-project-id: ${{ secrets.SPS_SCRIBE_RETWEET_PROJECT_ID}}
           vercel-args: '--prod'
           github-comment: false # No need to comment preview link
           working-directory: ./

@@ -1,0 +1,8 @@
+.github/
+.vscode/
+.husky/
+node_modules/
+db/
+scripts/
+.prettierignore
+.prettierrc
